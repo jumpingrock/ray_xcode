@@ -11,17 +11,31 @@ import SwiftUI
 struct ContentView: View {
 
   @State var alertIsVisible: Bool = false
-  @State var whoseThereIsVisible: Bool = false
+  @State var sliderValue: Double = 50.0
+  @State var scoreThisRound: Int = 0
+  @State var roundNumber: Int = 1
+  var target: Int = Int.random(in: 1...100)
 
   var body: some View {
     
 
     VStack {
-
-      Text("Welcome to my first app!")
-        .fontWeight(.semibold)
-        .foregroundColor(Color.green)
-
+      Spacer()
+      HStack {
+        // Target row
+        Text("Put the bullseye as close as you can to: ")
+        Text("\(target)")
+                
+      }
+      Spacer()
+      //Slider row
+      HStack {
+        Text("1")
+        Slider(value: self.$sliderValue, in: 1...100)
+        Text("100")
+      }
+      Spacer()
+      //Button row
       Button(action: {
         print("Button pressed!")
         self.alertIsVisible = true
@@ -29,28 +43,52 @@ struct ContentView: View {
         Text(/*@START_MENU_TOKEN@*/"Hit Me!"/*@END_MENU_TOKEN@*/)
       }.alert(isPresented: $alertIsVisible) { () ->
         Alert in
+
+//        scoreThisRound = pointsForCurrentRound()
+        roundNumber += 1
         return Alert(title: Text("Hello there!"),
-                     message: Text("This is my first pop-up"),
+                     message: Text(
+                      "The slider's value is \(sliderValueRounded()).\n" +
+                      "You scored \(pointsForCurrentRound()) points this round."),
                      dismissButton: .default(Text("Awsome!")))
-    
       }
-      Button(action: {
-        self.whoseThereIsVisible = true
-      }) {
-        Text("Knock knock!")
-      }.alert(isPresented: $whoseThereIsVisible) { () ->
-        Alert in
-        return Alert(title: Text("whose there"),
-                     message: Text("I am"),
-                     dismissButton: .default(Text("I am boning yo mama!")))
-      }
+      Spacer()
+      // Score row
+      HStack {
+        Button(action: {
+          print("Start over button pressed")
+        }) {
+          Text("Start Over")
+        }
+        Spacer()
+        Text("Score: ")
+        Text("99999")
+        Spacer()
+        Text("Round: ")
+        Text("000")
+        Spacer()
+        Button(action: {
+          print("Info button pressed")
+        }) {
+          Text("Info")
+        }
+      }.padding(.bottom, 20)
     }
+  }
+  func sliderValueRounded() -> Int {
+    return Int(sliderValue.rounded())
+  }
+  
+  func pointsForCurrentRound() -> Int {
+
+    return (100 - abs(target-sliderValueRounded()))
   }
 }
 
 
-struct ContentView_Previews: PreviewProvider {
+struct ContentView_Previews:
+  PreviewProvider {
   static var previews: some View {
-    ContentView()
+    ContentView().previewLayout(.fixed(width: 896, height: 414))
   }
 }
