@@ -114,8 +114,8 @@ struct ContentView: View {
             Text("Start Over").modifier(ButtonSmallTextStyle())
           }
         }
-          .background(Image("Button"))
-          .modifier(Shadow())
+        .background(Image("Button"))
+        .modifier(Shadow())
         
         Spacer()
         Text("Score: ").modifier(LabelStyle())
@@ -131,7 +131,7 @@ struct ContentView: View {
             Text("Info").modifier(ButtonSmallTextStyle())
           }
           
-          }
+        }
           .background(Image("Button"))
           .modifier(Shadow())
         
