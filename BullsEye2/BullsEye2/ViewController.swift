@@ -9,10 +9,13 @@
 import UIKit
 
 class ViewController: UIViewController {
+  
   var currentValue: Int = 0
   var targetValue: Int = 0
-  var points: Int = 0
-  var rounds: Int = 1
+  var score: Int = 0
+  var round: Int = 0
+  
+  
   @IBOutlet weak var slider: UISlider!
   @IBOutlet weak var targetLabel: UILabel!
   @IBOutlet weak var scoreLabel: UILabel!
@@ -20,27 +23,25 @@ class ViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-//    currentValue = Int(slider.value.rounded())
-//    targetValue = Int.random(in: 1...100)
-    startNewRound()
+    startOver()
     // Do any additional setup after loading the view.
   }
   
   @IBAction func showAlert () {
-//    print("Hit me pressed")
-    points += calPoints()
-    rounds += 1
-    let alert = UIAlertController(title: "Hello, World!", message: "The value of the slider is now: \(currentValue)" +
-      "\nThe target value is: \(targetValue)" +
-      "\nYour points \(calPoints())", preferredStyle: .alert)
     
-    let action = UIAlertAction(title: "Awesome", style: .default, handler: nil)
+    let title: String = titleDes()
+    
+    let alert = UIAlertController(title: title, message: "You scored \(calPoints())", preferredStyle: .alert)
+    
+    let action = UIAlertAction(title: "Awesome", style: .default, handler: {
+      action in
+      self.startNewRound()
+    })
     
     alert.addAction(action)
     
     present(alert, animated: true, completion: nil)
     
-    startNewRound()
   }
   
   @IBAction func sliderMoved (_ slider: UISlider) {
@@ -50,12 +51,15 @@ class ViewController: UIViewController {
   @IBAction func startOver () {
     targetValue = Int.random(in: 1...100)
     currentValue = 50
-    rounds = 1
-    points = 0
+    slider.value = Float(currentValue)
+    round = 1
+    score = 0
     updateLabel()
   }
   
   func startNewRound () {
+    round += 1
+    score += calPoints()
     targetValue = Int.random(in: 1...100)
     currentValue = 50
     slider.value = Float(currentValue)
@@ -64,21 +68,41 @@ class ViewController: UIViewController {
   
   func updateLabel() {
     targetLabel.text = String(targetValue)
-    scoreLabel.text = String(points)
-    roundLabel.text = String(rounds)
+    scoreLabel.text = String(score)
+    roundLabel.text = String(round)
+  }
+  
+  func difference () -> Int {
+    return  abs(targetValue - currentValue)
   }
   
   func calPoints() -> Int {
-    let scoreCal: Int = abs(targetValue - currentValue)
-    var baseScore: Int = 100
-    if scoreCal == 0 {
-      baseScore *= 2
-    }else if scoreCal == 1 {
-      baseScore += 50
-    }else {
-      baseScore -= scoreCal
+    let scoreDiff:Int = difference()
+    var scoreCal: Int = 0
+    
+    if scoreDiff == 0 {
+      scoreCal += 100
+    }else if scoreDiff == 1 {
+      scoreCal += 50
     }
-    return baseScore
+    return (100 - scoreDiff + scoreCal)
+  }
+  
+  func titleDes() -> String {
+    
+    let scoreCal:Int = difference()
+    let titleDesc: String
+    
+    if scoreCal == 0 {
+      titleDesc = "Perfect!"
+    }else if scoreCal < 5 {
+      titleDesc = "You almost had it!"
+    }else if scoreCal < 10 {
+      titleDesc = "Pretty good!"
+    }else {
+      titleDesc = "Not even close..."
+    }
+    return titleDesc
   }
 
 }
